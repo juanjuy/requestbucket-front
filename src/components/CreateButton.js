@@ -1,12 +1,19 @@
 import React from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 const CreateButton = () => {
-  const backendUrl = "http://localhost:3000";
+  let navigate = useNavigate();
+
+  const makeBucket = async () => {
+    let req = await axios.post('/create');
+    navigate('/create/' + req.data);
+  }
 
   return (
-    <form method="POST" action={backendUrl + '/create'}>
-      <button type="submit">MAKE BUCKET</button>
-    </form>
+    <div className="create-button">
+      <button onClick={makeBucket} type="submit">MAKE BUCKET</button>
+    </div>
   )
 }
 
