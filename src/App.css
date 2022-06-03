@@ -2,12 +2,18 @@ html {
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
+img {
+  width: 10%;
+  height: 10%;
+}
+
 body {
   background-color: #b967ff;
   text-align: center;
 }
 
 h1 {
+  margin-top: -10px;
   color: #01cdfe;
   text-decoration: none;
 }
@@ -47,4 +53,15 @@ button {
   font-family: monospace;
   margin-left: 10px;
   width: 50%;
+}
+
+footer {
+  font-size: 8px;
+  position: absolute;
+  bottom: 0px;
+  width: 100px;
+  left: 0px;
+  right: 0px;
+  margin-left: auto;
+  margin-right: auto;
 }
