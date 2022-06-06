@@ -1,6 +1,6 @@
 // ping the backend to query the history from mongo
 // then format it and display it properly
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import axios from 'axios';
 import { useState } from "react";
@@ -42,31 +42,35 @@ const History = () => {
   let { bucketUrl } = useParams();
 
   useEffect(() => {
-    const getData = async() => {
+    ;(async () => {
       let data = await axios.get('/stash/' + bucketUrl);
       if (typeof data.data !== 'string') {
         setReqs(data.data);
-        console.log('REQS: ', reqs)
+        console.log('--data', data.data)
       }
-    }
-    getData();
+
+    })();
 
     socket.on('connect', () => console.log(`--- SOCKET connected to ${socket.id}`))
     
     socket.on("connect_error", () => console.error('--- SOCKET CONNECTION ERROR'));
-
+    
     // listen for new requests to specific bucketUrl
     socket.on("NEW_REQUEST_IN_BUCKET", (data) => {
+      console.log('got a new event!! ')
       if (data.bucketUrl === bucketUrl) {
-        setReqs(reqs.concat(data.data))
+        setReqs([...reqs, data.data])
       }
+      console.log('REQS after new event: ', reqs)
     })
-
+      
     return () => {
       socket.disconnect() // disconnect from event to prevent memory leaks
     }
-
   }, [bucketUrl])
+
+
+  console.log('REQS before render: ', reqs)
     
     return (
       <div>
