@@ -40,44 +40,32 @@ const Block = ({ headers, payload, requestType }) => {
 const History = () => {
   const [reqs, setReqs] = useState([]);
   let { bucketUrl } = useParams();
-      
-  socket.on('connect', () => console.log(`--- SOCKET connected to ${socket.id}`))
-  socket.on("connect_error", () => console.error('--- SOCKET CONNECTION ERROR'));
 
   useEffect(() => {
-    console.log('first effect');
     ;(async () => {
       let data = await axios.get('/stash/' + bucketUrl);
       if (typeof data.data !== 'string') {
         setReqs(data.data);
-        console.log('--data', data.data)
       }
     })();
-    
-  }, [bucketUrl])
-  
-  useEffect(() => {
-    console.log('second effect');
+
     // listen for new requests to specific bucketUrl
     socket.on("NEW_REQUEST_IN_BUCKET", (data) => {
-      console.log('got a new event!!', data.data)
       if (data.bucketUrl === bucketUrl) {
-        console.log('REQS BEFORE SET', reqs)
-        setReqs([...reqs, data.data]) // BUGGY: reassigns reqs array to only one item
+        setReqs((prev) => {return [data.data, ...prev]})
       }
     })
       
     return () => {
       socket.disconnect() // disconnect from event to prevent memory leaks
     }
-  },[bucketUrl])
-
-  console.log('REQS before render: ', reqs)
     
+  }, [bucketUrl])
+  
   return (
     <ul id="history">
-    {reqs.reverse().map((request, i) => {
-      return (<Block key={i} headers={request.headers} payload={request.payload} requestType={request.requestType}/>)
+    {reqs.map(request => {
+      return (<Block key={request.id} headers={request.headers} payload={request.payload} requestType={request.requestType}/>)
     })}
    </ul>
   )
